@@ -15,7 +15,9 @@
           <a class="nav-link" data-page="participants" href="./participants.html">Participants</a>
           <a class="nav-link" data-page="classes" href="./classes.html">Classes</a>
           <a class="nav-link" data-page="attendance" href="./attendance.html">Attendance</a>
+          <a class="nav-link" data-page="attendance_session" href="./attendance_session.html">Session</a>
           <a class="nav-link" data-page="baptism" href="./baptism.html">Baptism</a>
+          <a class="nav-link" data-page="requirements" href="./requirements.html">Requirements</a>
           <a class="nav-link" data-page="reports" href="./reports.html">Reports</a>
         </nav>
       </aside>
@@ -31,16 +33,24 @@
           </header>
 
           <p id="status" class="status"></p>
+          <p class="muted">
+            Need roll call for a whole class?
+            <a href="./attendance_session.html">Open Attendance Session</a>.
+          </p>
 
       <form id="attendanceForm" class="form-grid">
         <input id="attendanceId" name="attendanceId" type="hidden" />
         <div class="stack">
-          <label for="participantId">Participant ID</label>
-          <input id="participantId" name="participant_id" type="text" required />
+          <label for="participantId">Participant</label>
+          <select id="participantId" name="participant_id" required>
+            <option value="">Select participant</option>
+          </select>
         </div>
         <div class="stack">
-          <label for="classId">Class ID</label>
-          <input id="classId" name="class_id" type="text" required />
+          <label for="classId">Class</label>
+          <select id="classId" name="class_id" required>
+            <option value="">Select class</option>
+          </select>
         </div>
         <div class="stack">
           <label for="attendanceStatus">Status</label>
@@ -70,6 +80,22 @@
               </thead>
               <tbody id="attendanceBody"></tbody>
             </table>
+          </div>
+
+          <div class="pagination-bar">
+            <div class="pagination-meta">
+              <span id="pageInfo" class="muted"></span>
+            </div>
+            <div class="pagination-controls">
+              <label class="inline-label" for="pageSize">Page size</label>
+              <select id="pageSize">
+                <option value="10">10</option>
+                <option value="25" selected>25</option>
+                <option value="50">50</option>
+              </select>
+              <button id="prevPageBtn" type="button" disabled>Previous</button>
+              <button id="nextPageBtn" type="button" disabled>Next</button>
+            </div>
           </div>
         </section>
       </main>

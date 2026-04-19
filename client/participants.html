@@ -15,7 +15,9 @@
           <a class="nav-link" data-page="participants" href="./participants.html">Participants</a>
           <a class="nav-link" data-page="classes" href="./classes.html">Classes</a>
           <a class="nav-link" data-page="attendance" href="./attendance.html">Attendance</a>
+          <a class="nav-link" data-page="attendance_session" href="./attendance_session.html">Session</a>
           <a class="nav-link" data-page="baptism" href="./baptism.html">Baptism</a>
+          <a class="nav-link" data-page="requirements" href="./requirements.html">Requirements</a>
           <a class="nav-link" data-page="reports" href="./reports.html">Reports</a>
         </nav>
       </aside>
@@ -63,7 +65,7 @@
       <form id="participantsFilterForm" class="form-grid">
         <div class="stack">
           <label for="name">Name</label>
-          <input id="name" name="name" type="text" placeholder="Search name" />
+          <input id="name" name="name" type="text" placeholder="Search name (live)" />
         </div>
         <div class="stack">
           <label for="statusFilter">Status</label>
@@ -104,6 +106,22 @@
               </thead>
               <tbody id="participantsBody"></tbody>
             </table>
+          </div>
+
+          <div class="pagination-bar">
+            <div class="pagination-meta">
+              <span id="pageInfo" class="muted"></span>
+            </div>
+            <div class="pagination-controls">
+              <label class="inline-label" for="pageSize">Page size</label>
+              <select id="pageSize">
+                <option value="10">10</option>
+                <option value="25" selected>25</option>
+                <option value="50">50</option>
+              </select>
+              <button id="prevPageBtn" type="button" disabled>Previous</button>
+              <button id="nextPageBtn" type="button" disabled>Next</button>
+            </div>
           </div>
         </section>
       </main>

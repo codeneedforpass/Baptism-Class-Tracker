@@ -2,7 +2,7 @@
 -- Run in Supabase SQL editor
 
 -- 1) Participants with baptism schedule
--- Uses an IN() subquery against baptismschedule
+-- Uses an IN() subquery against baptism_schedule
 select
   p.participant_id,
   p.first_name,
@@ -11,7 +11,7 @@ select
 from public.participants p
 where p.participant_id in (
   select bs.participant_id
-  from public.baptismschedule bs
+  from public.baptism_schedule bs
 );
 
 -- 2) Participants older than average age

@@ -38,13 +38,17 @@ Run scripts in this order:
 
 1. `supabase/01_schema_seed.sql`
    - Creates tables, PK/FK, RLS, and inserts sample data.
-2. `supabase/dashboard_view.sql`
+2. `supabase/02_safe_schema_migration.sql`
+   - Safe canonical migration (`baptism_schedule`), compatibility view, indexes, and `updated_at` trigger.
+3. `supabase/03_rls_hardening.sql`
+   - Replaces broad RLS with role-aware policies + bootstrap fallback.
+4. `supabase/dashboard_view.sql`
    - Dashboard aggregation view.
-3. `supabase/attendance_report_view.sql`
+5. `supabase/attendance_report_view.sql`
    - JOIN report view (participants + attendance + classes).
-4. `supabase/subqueries.sql`
+6. `supabase/subqueries.sql`
    - Three required PostgreSQL subqueries.
-5. `supabase/attendance_per_participant_cte.sql`
+7. `supabase/attendance_per_participant_cte.sql`
    - Required CTE-based attendance totals view.
 
 ## 5) Requirements Checklist
@@ -62,7 +66,24 @@ Run scripts in this order:
 
 - Login/logout/session protection via Supabase Auth.
 - CRUD pages wired to Supabase client:
-  - Participants, Classes, Attendance, Baptism Schedule
+  - Participants, Classes, Attendance, Baptism Schedule, Requirements
+- Participant profile page:
+  - `client/participant.html` (open from Participants table **Profile**)
 - Dashboard reads SQL aggregation view.
 - Reports page reads SQL JOIN view (with fallback relational query).
 - Loading and error states on each page/action.
+- Phase 2 operational UX:
+  - `client/attendance_session.html` bulk attendance grid (per class) + save + live roll-call summary
+  - Participants list paging + live name search
+  - Classes and Attendance table paging
+  - Reports CSV export
+
+## 7) Security/Data Hardening Notes
+
+- Canonical table is now `public.baptism_schedule`.
+- Legacy compatibility view `public.baptismschedule` is kept for transitional safety.
+- Role-aware RLS uses:
+  - `users.auth_user_id` (mapped to `auth.users.id`)
+  - `public.current_app_role()` helper
+- Bootstrap fallback is enabled:
+  - if no `auth_user_id` mappings exist yet, authenticated access remains available until mappings are added.

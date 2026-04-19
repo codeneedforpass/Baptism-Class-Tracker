@@ -5,7 +5,8 @@
 create extension if not exists pgcrypto;
 
 drop table if exists public.requirements cascade;
-drop table if exists public.baptismschedule cascade;
+drop view if exists public.baptismschedule cascade;
+drop table if exists public.baptism_schedule cascade;
 drop table if exists public.attendance cascade;
 drop table if exists public.classes cascade;
 drop table if exists public.participants cascade;
@@ -50,7 +51,7 @@ create table public.attendance (
   unique (participant_id, class_id)
 );
 
-create table public.baptismschedule (
+create table public.baptism_schedule (
   schedule_id uuid primary key default gen_random_uuid(),
   participant_id uuid not null references public.participants(participant_id) on delete cascade,
   class_id uuid references public.classes(class_id) on delete set null,
@@ -66,21 +67,22 @@ create table public.requirements (
   participant_id uuid not null references public.participants(participant_id) on delete cascade,
   requirement_name text not null,
   requirement_status text not null check (requirement_status in ('pending', 'completed', 'waived')),
-  verified_at timestamptz
+  verified_at timestamptz,
+  notes text
 );
 
 alter table public.users enable row level security;
 alter table public.participants enable row level security;
 alter table public.classes enable row level security;
 alter table public.attendance enable row level security;
-alter table public.baptismschedule enable row level security;
+alter table public.baptism_schedule enable row level security;
 alter table public.requirements enable row level security;
 
 create policy "users_auth_all" on public.users for all to authenticated using (true) with check (true);
 create policy "participants_auth_all" on public.participants for all to authenticated using (true) with check (true);
 create policy "classes_auth_all" on public.classes for all to authenticated using (true) with check (true);
 create policy "attendance_auth_all" on public.attendance for all to authenticated using (true) with check (true);
-create policy "baptismschedule_auth_all" on public.baptismschedule for all to authenticated using (true) with check (true);
+create policy "baptismschedule_auth_all" on public.baptism_schedule for all to authenticated using (true) with check (true);
 create policy "requirements_auth_all" on public.requirements for all to authenticated using (true) with check (true);
 
 insert into public.users (user_id, full_name, email, role) values
@@ -111,16 +113,19 @@ insert into public.attendance (attendance_id, participant_id, class_id, attendan
 ('44444444-4444-4444-4444-444444444444', '22222222-2222-2222-2222-222222222224', '33333333-3333-3333-3333-333333333333', 'absent'),
 ('44444444-4444-4444-4444-444444444445', '22222222-2222-2222-2222-222222222225', '33333333-3333-3333-3333-333333333334', 'excused');
 
-insert into public.baptismschedule (schedule_id, participant_id, class_id, baptism_date, baptism_time, location, status) values
+insert into public.baptism_schedule (schedule_id, participant_id, class_id, baptism_date, baptism_time, location, status) values
 ('55555555-5555-5555-5555-555555555551', '22222222-2222-2222-2222-222222222221', '33333333-3333-3333-3333-333333333335', '2026-06-07', '11:00', 'Main Sanctuary', 'scheduled'),
 ('55555555-5555-5555-5555-555555555552', '22222222-2222-2222-2222-222222222222', '33333333-3333-3333-3333-333333333335', '2026-06-07', '11:00', 'Main Sanctuary', 'completed'),
 ('55555555-5555-5555-5555-555555555553', '22222222-2222-2222-2222-222222222223', '33333333-3333-3333-3333-333333333335', '2026-06-14', '11:00', 'Main Sanctuary', 'postponed'),
 ('55555555-5555-5555-5555-555555555554', '22222222-2222-2222-2222-222222222224', '33333333-3333-3333-3333-333333333335', '2026-06-14', '11:00', 'Main Sanctuary', 'scheduled'),
 ('55555555-5555-5555-5555-555555555555', '22222222-2222-2222-2222-222222222225', '33333333-3333-3333-3333-333333333335', '2026-06-21', '11:00', 'Main Sanctuary', 'cancelled');
 
-insert into public.requirements (requirement_id, participant_id, requirement_name, requirement_status, verified_at) values
-('66666666-6666-6666-6666-666666666661', '22222222-2222-2222-2222-222222222221', 'Completed all classes', 'completed', now()),
-('66666666-6666-6666-6666-666666666662', '22222222-2222-2222-2222-222222222222', 'Pastoral interview', 'completed', now()),
-('66666666-6666-6666-6666-666666666663', '22222222-2222-2222-2222-222222222223', 'Parental consent form', 'pending', null),
-('66666666-6666-6666-6666-666666666664', '22222222-2222-2222-2222-222222222224', 'Faith testimony submitted', 'completed', now()),
-('66666666-6666-6666-6666-666666666665', '22222222-2222-2222-2222-222222222225', 'Baptism class workbook', 'waived', now());
+create or replace view public.baptismschedule as
+select * from public.baptism_schedule;
+
+insert into public.requirements (requirement_id, participant_id, requirement_name, requirement_status, verified_at, notes) values
+('66666666-6666-6666-6666-666666666661', '22222222-2222-2222-2222-222222222221', 'Completed all classes', 'completed', now(), 'All sessions attended'),
+('66666666-6666-6666-6666-666666666662', '22222222-2222-2222-2222-222222222222', 'Pastoral interview', 'completed', now(), 'Interview approved'),
+('66666666-6666-6666-6666-666666666663', '22222222-2222-2222-2222-222222222223', 'Parental consent form', 'pending', null, 'Waiting for signed form'),
+('66666666-6666-6666-6666-666666666664', '22222222-2222-2222-2222-222222222224', 'Faith testimony submitted', 'completed', now(), 'Reviewed by assistant'),
+('66666666-6666-6666-6666-666666666665', '22222222-2222-2222-2222-222222222225', 'Baptism class workbook', 'waived', now(), 'Waived by admin');

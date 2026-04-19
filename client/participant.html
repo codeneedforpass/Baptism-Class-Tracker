@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard | Baptism Class Tracker</title>
+    <title>Participant Profile | Baptism Class Tracker</title>
     <link rel="stylesheet" href="./css/styles.css" />
   </head>
   <body class="app-page">
@@ -25,42 +25,77 @@
       <main class="app-main">
         <section class="container app-container">
           <header class="topbar">
-            <h1>Baptism Class Tracker</h1>
+            <h1 id="profileTitle">Participant</h1>
             <div class="actions">
               <span id="userEmail" class="muted"></span>
               <button id="logoutBtn" type="button">Logout</button>
             </div>
           </header>
 
-          <p id="status" class="status">Loading dashboard...</p>
+          <p id="status" class="status"></p>
 
           <section class="row">
             <article class="card">
-              <p class="muted">Total Participants</p>
-              <p id="totalParticipants">-</p>
+              <p class="muted">Contact</p>
+              <p id="profileContact">-</p>
             </article>
             <article class="card">
-              <p class="muted">Average Age</p>
-              <p id="averageAge">-</p>
+              <p class="muted">Date of Birth</p>
+              <p id="profileDob">-</p>
             </article>
             <article class="card">
-              <p class="muted">Oldest</p>
-              <p id="oldestAge">-</p>
-            </article>
-            <article class="card">
-              <p class="muted">Youngest</p>
-              <p id="youngestAge">-</p>
-            </article>
-            <article class="card">
-              <p class="muted">Completed Participants</p>
-              <p id="completedParticipants">-</p>
+              <p class="muted">Enrolled</p>
+              <p id="profileEnrolled">-</p>
             </article>
           </section>
+
+          <h2 class="section-heading">Baptism schedule</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Location</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="profileBaptismBody"></tbody>
+            </table>
+          </div>
+
+          <h2 class="section-heading">Attendance</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Class ID</th>
+                  <th>Status</th>
+                  <th>Marked At</th>
+                </tr>
+              </thead>
+              <tbody id="profileAttendanceBody"></tbody>
+            </table>
+          </div>
+
+          <h2 class="section-heading">Requirements</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Status</th>
+                  <th>Verified At</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody id="profileRequirementsBody"></tbody>
+            </table>
+          </div>
         </section>
       </main>
     </div>
-
     <script src="./js/config.js"></script>
-    <script type="module" src="./js/dashboardPage.js"></script>
+    <script type="module" src="./js/participantPage.js"></script>
   </body>
 </html>

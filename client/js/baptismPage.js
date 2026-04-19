@@ -4,14 +4,31 @@ import {
   insertBaptismSchedule,
   updateBaptismSchedule
 } from "./baptismSchedule.js";
+import { fetchAllParticipants } from "./participants.js";
 import { initProtectedPage } from "./pageShell.js";
 
 const statusEl = document.getElementById("status");
 const tbody = document.getElementById("baptismBody");
 const baptismForm = document.getElementById("baptismForm");
 const saveBaptismBtn = document.getElementById("saveBaptismBtn");
+const participantSelect = document.getElementById("scheduleParticipantId");
 
 let currentRows = [];
+let participantsMap = new Map();
+
+function formatParticipantLabel(row) {
+  const fullName = `${row.first_name || ""} ${row.last_name || ""}`.trim();
+  return fullName ? `${fullName} (${row.participant_id})` : row.participant_id;
+}
+
+async function loadParticipantOptions() {
+  const participants = await fetchAllParticipants();
+  participantsMap = new Map(participants.map((row) => [row.participant_id, row]));
+  participantSelect.innerHTML = [
+    "<option value=''>Select participant</option>",
+    ...participants.map((row) => `<option value="${row.participant_id}">${formatParticipantLabel(row)}</option>`)
+  ].join("");
+}
 
 function renderRows(rows) {
   if (!rows.length) {
@@ -23,7 +40,11 @@ function renderRows(rows) {
     .map(
       (row) => `
       <tr>
-        <td>${row.participant_id || "-"}</td>
+        <td>${
+          participantsMap.get(row.participant_id)
+            ? formatParticipantLabel(participantsMap.get(row.participant_id))
+            : row.participant_id || "-"
+        }</td>
         <td>${row.baptism_date || "-"}</td>
         <td>${row.baptism_time || "-"}</td>
         <td>${row.location || "-"}</td>
@@ -40,6 +61,7 @@ function renderRows(rows) {
 
 async function loadSchedules() {
   statusEl.textContent = "Loading schedules...";
+  await loadParticipantOptions();
   const rows = await fetchAllBaptismSchedules();
   currentRows = rows;
   renderRows(rows);
@@ -54,7 +76,7 @@ function resetBaptismForm() {
 
 function fillBaptismForm(row) {
   document.getElementById("scheduleId").value = row.schedule_id || "";
-  document.getElementById("scheduleParticipantId").value = row.participant_id || "";
+  participantSelect.value = row.participant_id || "";
   document.getElementById("baptismDate").value = row.baptism_date || "";
   document.getElementById("baptismTime").value = row.baptism_time || "";
   document.getElementById("baptismLocation").value = row.location || "";

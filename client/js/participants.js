@@ -14,6 +14,21 @@ export async function fetchAllParticipants() {
 }
 
 /**
+ * Fetch one participant by id.
+ * @param {string} participantId
+ */
+export async function fetchParticipantById(participantId) {
+  const { data, error } = await supabase
+    .from("participants")
+    .select("*")
+    .eq("participant_id", participantId)
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+/**
  * Search and filter participants.
  * Uses:
  * - .ilike() for name search
@@ -25,14 +40,17 @@ export async function fetchAllParticipants() {
  * @param {string} [filters.status] - Participant status filter
  * @param {string} [filters.baptismDateFrom] - YYYY-MM-DD
  * @param {string} [filters.baptismDateTo] - YYYY-MM-DD
+ * @param {number} [filters.limit] - page size
+ * @param {number} [filters.offset] - row offset
  */
 export async function fetchParticipantsByFilters(filters = {}) {
-  const { name, status, baptismDateFrom, baptismDateTo } = filters;
+  const { name, status, baptismDateFrom, baptismDateTo, limit, offset } = filters;
 
   let query = supabase
     .from("participants")
-    .select("*, baptismschedule(status, baptism_date)")
-    .order("enrolled_at", { ascending: false });
+    .select("*, baptism_schedule(status, baptism_date, baptism_time, schedule_id)", { count: "exact" })
+    .order("enrolled_at", { ascending: false })
+    .order("baptism_date", { ascending: false, foreignTable: "baptism_schedule" });
 
   if (name && name.trim()) {
     const safeName = name.trim().replace(/,/g, " ");
@@ -40,20 +58,25 @@ export async function fetchParticipantsByFilters(filters = {}) {
   }
 
   if (status && status.trim()) {
-    query = query.eq("baptismschedule.status", status.trim());
+    query = query.eq("baptism_schedule.status", status.trim());
   }
 
   if (baptismDateFrom && baptismDateFrom.trim()) {
-    query = query.gte("baptismschedule.baptism_date", baptismDateFrom.trim());
+    query = query.gte("baptism_schedule.baptism_date", baptismDateFrom.trim());
   }
 
   if (baptismDateTo && baptismDateTo.trim()) {
-    query = query.lte("baptismschedule.baptism_date", baptismDateTo.trim());
+    query = query.lte("baptism_schedule.baptism_date", baptismDateTo.trim());
   }
 
-  const { data, error } = await query;
+  if (typeof limit === "number" && limit > 0) {
+    const safeOffset = typeof offset === "number" && offset >= 0 ? offset : 0;
+    query = query.range(safeOffset, safeOffset + limit - 1);
+  }
+
+  const { data, error, count } = await query;
   if (error) throw error;
-  return data;
+  return { rows: data, count };
 }
 
 /**

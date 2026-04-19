@@ -1,12 +1,19 @@
-import { deleteClass, fetchAllClasses, insertClass, updateClass } from "./classes.js";
+import { deleteClass, fetchClassesPaged, insertClass, updateClass } from "./classes.js";
 import { initProtectedPage } from "./pageShell.js";
 
 const statusEl = document.getElementById("status");
 const tbody = document.getElementById("classesBody");
 const classForm = document.getElementById("classForm");
 const saveClassBtn = document.getElementById("saveClassBtn");
+const pageInfoEl = document.getElementById("pageInfo");
+const pageSizeEl = document.getElementById("pageSize");
+const prevPageBtn = document.getElementById("prevPageBtn");
+const nextPageBtn = document.getElementById("nextPageBtn");
 
 let currentRows = [];
+let currentPage = 0;
+let pageSize = Number(pageSizeEl?.value || 25) || 25;
+let totalCount = 0;
 
 function renderRows(rows) {
   if (!rows.length) {
@@ -33,12 +40,41 @@ function renderRows(rows) {
     .join("");
 }
 
-async function loadClasses() {
+function updatePaginationUi() {
+  if (!pageInfoEl || !prevPageBtn || !nextPageBtn) return;
+
+  const start = totalCount === 0 ? 0 : currentPage * pageSize + 1;
+  const end = totalCount === 0 ? 0 : Math.min(totalCount, currentPage * pageSize + currentRows.length);
+  pageInfoEl.textContent =
+    totalCount === 0 ? "No classes yet." : `Showing ${start}-${end} of ${totalCount}`;
+
+  prevPageBtn.disabled = currentPage <= 0;
+  const lastPageIndex = Math.max(0, Math.ceil(totalCount / pageSize) - 1);
+  nextPageBtn.disabled = totalCount === 0 || currentPage >= lastPageIndex;
+}
+
+async function loadClasses(options = {}) {
+  const { resetPage } = options;
+  if (resetPage) currentPage = 0;
+
+  const offset = currentPage * pageSize;
   statusEl.textContent = "Loading classes...";
-  const rows = await fetchAllClasses();
-  currentRows = rows;
-  renderRows(rows);
-  statusEl.textContent = `Loaded ${rows.length} class(es).`;
+  prevPageBtn && (prevPageBtn.disabled = true);
+  nextPageBtn && (nextPageBtn.disabled = true);
+
+  try {
+    const { rows, count } = await fetchClassesPaged({ limit: pageSize, offset });
+    totalCount = typeof count === "number" ? count : rows.length;
+    currentRows = rows;
+    renderRows(rows);
+    updatePaginationUi();
+    statusEl.textContent =
+      totalCount === 0
+        ? "No classes on this page."
+        : `Loaded ${rows.length} class(es) on this page (${totalCount} total).`;
+  } catch (error) {
+    statusEl.textContent = `Failed to load classes: ${error.message}`;
+  }
 }
 
 function resetClassForm() {
@@ -60,7 +96,7 @@ function fillClassForm(row) {
 async function init() {
   try {
     await initProtectedPage("classes");
-    await loadClasses();
+    await loadClasses({ resetPage: true });
 
     classForm.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -83,7 +119,7 @@ async function init() {
           await insertClass(payload);
         }
         resetClassForm();
-        await loadClasses();
+        await loadClasses({ resetPage: true });
       } catch (error) {
         statusEl.textContent = `Save failed: ${error.message}`;
       } finally {
@@ -111,11 +147,29 @@ async function init() {
         try {
           statusEl.textContent = "Deleting class...";
           await deleteClass(deleteId);
-          await loadClasses();
+          await loadClasses({ resetPage: false });
         } catch (error) {
           statusEl.textContent = `Delete failed: ${error.message}`;
         }
       }
+    });
+
+    pageSizeEl?.addEventListener("change", async () => {
+      pageSize = Number(pageSizeEl.value || 25) || 25;
+      await loadClasses({ resetPage: true });
+    });
+
+    prevPageBtn?.addEventListener("click", async () => {
+      if (currentPage <= 0) return;
+      currentPage -= 1;
+      await loadClasses();
+    });
+
+    nextPageBtn?.addEventListener("click", async () => {
+      const lastPageIndex = Math.max(0, Math.ceil(totalCount / pageSize) - 1);
+      if (currentPage >= lastPageIndex) return;
+      currentPage += 1;
+      await loadClasses();
     });
   } catch (error) {
     statusEl.textContent = `Failed to load classes: ${error.message}`;

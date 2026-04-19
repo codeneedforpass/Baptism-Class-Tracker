@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reports | Baptism Class Tracker</title>
+    <title>Attendance Session | Baptism Class Tracker</title>
     <link rel="stylesheet" href="./css/styles.css" />
   </head>
   <body class="app-page">
@@ -25,34 +25,57 @@
       <main class="app-main">
         <section class="container app-container">
           <header class="topbar">
-            <h1>Attendance Report</h1>
+            <h1>Attendance Session</h1>
             <div class="actions">
               <span id="userEmail" class="muted"></span>
-              <button id="exportCsvBtn" type="button">Export CSV</button>
               <button id="logoutBtn" type="button">Logout</button>
             </div>
           </header>
 
+          <p class="muted">
+            Pick a class, mark everyone in one grid, then save. Clearing a row removes that participant’s attendance for
+            this class.
+          </p>
+
           <p id="status" class="status"></p>
+
+          <div class="toolbar">
+            <div class="stack toolbar-field">
+              <label for="sessionClassId">Class</label>
+              <select id="sessionClassId">
+                <option value="">Select a class</option>
+              </select>
+            </div>
+            <div class="toolbar-actions">
+              <button id="reloadSessionBtn" type="button">Reload</button>
+              <button id="markAllPresentBtn" type="button">All present</button>
+              <button id="markAllAbsentBtn" type="button">All absent</button>
+              <button id="clearAllBtn" type="button">Clear all</button>
+              <button id="saveSessionBtn" type="button" disabled>Save session</button>
+            </div>
+          </div>
+
+          <p id="sessionSummary" class="session-summary muted" aria-live="polite"></p>
 
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
                   <th>Participant</th>
-                  <th>Class</th>
-                  <th>Class Date</th>
                   <th>Status</th>
-                  <th>Marked At</th>
                 </tr>
               </thead>
-              <tbody id="reportBody"></tbody>
+              <tbody id="sessionBody">
+                <tr>
+                  <td colspan="2">Select a class to load participants.</td>
+                </tr>
+              </tbody>
             </table>
           </div>
         </section>
       </main>
     </div>
     <script src="./js/config.js"></script>
-    <script type="module" src="./js/reportsPage.js"></script>
+    <script type="module" src="./js/attendanceSessionPage.js"></script>
   </body>
 </html>

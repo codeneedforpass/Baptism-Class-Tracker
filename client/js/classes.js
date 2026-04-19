@@ -14,6 +14,27 @@ export async function fetchAllClasses() {
 }
 
 /**
+ * Paged class list (same sort as fetchAllClasses).
+ * @param {Object} opts
+ * @param {number} [opts.limit]
+ * @param {number} [opts.offset]
+ */
+export async function fetchClassesPaged(opts = {}) {
+  const { limit, offset } = opts;
+
+  let query = supabase.from("classes").select("*", { count: "exact" }).order("class_date", { ascending: true });
+
+  if (typeof limit === "number" && limit > 0) {
+    const safeOffset = typeof offset === "number" && offset >= 0 ? offset : 0;
+    query = query.range(safeOffset, safeOffset + limit - 1);
+  }
+
+  const { data, error, count } = await query;
+  if (error) throw error;
+  return { rows: data, count };
+}
+
+/**
  * Insert one class record.
  * @param {Object} classPayload
  */

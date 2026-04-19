@@ -11,7 +11,7 @@ with participant_ages as (
 ),
 completed_participants as (
   select count(distinct bs.participant_id)::int as completed_count
-  from public.baptismschedule bs
+  from public.baptism_schedule bs
   where bs.status = 'completed'
 )
 select

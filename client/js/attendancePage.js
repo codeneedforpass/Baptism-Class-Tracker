@@ -1,17 +1,57 @@
 import {
   deleteAttendance,
-  fetchAllAttendance,
+  fetchAttendancePaged,
   insertAttendance,
   updateAttendance
 } from "./attendance.js";
+import { fetchAllClasses } from "./classes.js";
+import { fetchAllParticipants } from "./participants.js";
 import { initProtectedPage } from "./pageShell.js";
 
 const statusEl = document.getElementById("status");
 const tbody = document.getElementById("attendanceBody");
 const attendanceForm = document.getElementById("attendanceForm");
 const saveAttendanceBtn = document.getElementById("saveAttendanceBtn");
+const participantSelect = document.getElementById("participantId");
+const classSelect = document.getElementById("classId");
+const pageInfoEl = document.getElementById("pageInfo");
+const pageSizeEl = document.getElementById("pageSize");
+const prevPageBtn = document.getElementById("prevPageBtn");
+const nextPageBtn = document.getElementById("nextPageBtn");
 
 let currentRows = [];
+let participantsMap = new Map();
+let classesMap = new Map();
+let currentPage = 0;
+let pageSize = Number(pageSizeEl?.value || 25) || 25;
+let totalCount = 0;
+
+function formatParticipantLabel(row) {
+  const fullName = `${row.first_name || ""} ${row.last_name || ""}`.trim();
+  return fullName ? `${fullName} (${row.participant_id})` : row.participant_id;
+}
+
+function formatClassLabel(row) {
+  const className = row.class_name || "Unnamed Class";
+  return `${className} (${row.class_date || "No date"})`;
+}
+
+async function loadFormOptions() {
+  const [participants, classes] = await Promise.all([fetchAllParticipants(), fetchAllClasses()]);
+
+  participantsMap = new Map(participants.map((row) => [row.participant_id, row]));
+  classesMap = new Map(classes.map((row) => [row.class_id, row]));
+
+  participantSelect.innerHTML = [
+    "<option value=''>Select participant</option>",
+    ...participants.map((row) => `<option value="${row.participant_id}">${formatParticipantLabel(row)}</option>`)
+  ].join("");
+
+  classSelect.innerHTML = [
+    "<option value=''>Select class</option>",
+    ...classes.map((row) => `<option value="${row.class_id}">${formatClassLabel(row)}</option>`)
+  ].join("");
+}
 
 function renderRows(rows) {
   if (!rows.length) {
@@ -21,10 +61,12 @@ function renderRows(rows) {
 
   tbody.innerHTML = rows
     .map((row) => {
+      const participant = participantsMap.get(row.participant_id);
+      const classInfo = classesMap.get(row.class_id);
       return `
         <tr>
-          <td>${row.participant_id || "-"}</td>
-          <td>${row.class_id || "-"}</td>
+          <td>${participant ? formatParticipantLabel(participant) : row.participant_id || "-"}</td>
+          <td>${classInfo ? formatClassLabel(classInfo) : row.class_id || "-"}</td>
           <td>${row.attendance_status || "-"}</td>
           <td>${row.marked_at || "-"}</td>
           <td class="actions">
@@ -37,12 +79,47 @@ function renderRows(rows) {
     .join("");
 }
 
-async function loadAttendance() {
+function updatePaginationUi() {
+  if (!pageInfoEl || !prevPageBtn || !nextPageBtn) return;
+
+  const start = totalCount === 0 ? 0 : currentPage * pageSize + 1;
+  const end = totalCount === 0 ? 0 : Math.min(totalCount, currentPage * pageSize + currentRows.length);
+  pageInfoEl.textContent =
+    totalCount === 0 ? "No attendance rows yet." : `Showing ${start}-${end} of ${totalCount}`;
+
+  prevPageBtn.disabled = currentPage <= 0;
+  const lastPageIndex = Math.max(0, Math.ceil(totalCount / pageSize) - 1);
+  nextPageBtn.disabled = totalCount === 0 || currentPage >= lastPageIndex;
+}
+
+async function loadAttendanceTable(options = {}) {
+  const { resetPage } = options;
+  if (resetPage) currentPage = 0;
+
+  const offset = currentPage * pageSize;
   statusEl.textContent = "Loading attendance...";
-  const rows = await fetchAllAttendance();
-  currentRows = rows;
-  renderRows(rows);
-  statusEl.textContent = `Loaded ${rows.length} attendance row(s).`;
+  prevPageBtn && (prevPageBtn.disabled = true);
+  nextPageBtn && (nextPageBtn.disabled = true);
+
+  try {
+    const { rows, count } = await fetchAttendancePaged({ limit: pageSize, offset });
+    totalCount = typeof count === "number" ? count : rows.length;
+    currentRows = rows;
+    renderRows(rows);
+    updatePaginationUi();
+    statusEl.textContent =
+      totalCount === 0
+        ? "No attendance rows on this page."
+        : `Loaded ${rows.length} row(s) on this page (${totalCount} total).`;
+  } catch (error) {
+    statusEl.textContent = `Failed to load attendance: ${error.message}`;
+  }
+}
+
+async function loadAttendance(options = {}) {
+  const resetPage = options.resetPage ?? true;
+  await loadFormOptions();
+  await loadAttendanceTable({ resetPage });
 }
 
 function resetAttendanceForm() {
@@ -53,8 +130,8 @@ function resetAttendanceForm() {
 
 function fillAttendanceForm(row) {
   document.getElementById("attendanceId").value = row.attendance_id || "";
-  document.getElementById("participantId").value = row.participant_id || "";
-  document.getElementById("classId").value = row.class_id || "";
+  participantSelect.value = row.participant_id || "";
+  classSelect.value = row.class_id || "";
   document.getElementById("attendanceStatus").value = row.attendance_status || "present";
   saveAttendanceBtn.textContent = "Update Attendance";
 }
@@ -62,7 +139,7 @@ function fillAttendanceForm(row) {
 async function init() {
   try {
     await initProtectedPage("attendance");
-    await loadAttendance();
+    await loadAttendance({ resetPage: true });
 
     attendanceForm.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -83,7 +160,7 @@ async function init() {
           await insertAttendance(payload);
         }
         resetAttendanceForm();
-        await loadAttendance();
+        await loadAttendance({ resetPage: true });
       } catch (error) {
         statusEl.textContent = `Save failed: ${error.message}`;
       } finally {
@@ -111,11 +188,30 @@ async function init() {
         try {
           statusEl.textContent = "Deleting attendance...";
           await deleteAttendance(deleteId);
-          await loadAttendance();
+          await loadAttendance({ resetPage: false });
         } catch (error) {
           statusEl.textContent = `Delete failed: ${error.message}`;
         }
       }
+    });
+
+    pageSizeEl?.addEventListener("change", async () => {
+      pageSize = Number(pageSizeEl.value || 25) || 25;
+      await loadFormOptions();
+      await loadAttendanceTable({ resetPage: true });
+    });
+
+    prevPageBtn?.addEventListener("click", async () => {
+      if (currentPage <= 0) return;
+      currentPage -= 1;
+      await loadAttendanceTable();
+    });
+
+    nextPageBtn?.addEventListener("click", async () => {
+      const lastPageIndex = Math.max(0, Math.ceil(totalCount / pageSize) - 1);
+      if (currentPage >= lastPageIndex) return;
+      currentPage += 1;
+      await loadAttendanceTable();
     });
   } catch (error) {
     statusEl.textContent = `Failed to load attendance: ${error.message}`;

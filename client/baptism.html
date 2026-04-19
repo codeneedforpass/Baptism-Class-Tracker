@@ -15,7 +15,9 @@
           <a class="nav-link" data-page="participants" href="./participants.html">Participants</a>
           <a class="nav-link" data-page="classes" href="./classes.html">Classes</a>
           <a class="nav-link" data-page="attendance" href="./attendance.html">Attendance</a>
+          <a class="nav-link" data-page="attendance_session" href="./attendance_session.html">Session</a>
           <a class="nav-link" data-page="baptism" href="./baptism.html">Baptism</a>
+          <a class="nav-link" data-page="requirements" href="./requirements.html">Requirements</a>
           <a class="nav-link" data-page="reports" href="./reports.html">Reports</a>
         </nav>
       </aside>
@@ -35,8 +37,10 @@
       <form id="baptismForm" class="form-grid">
         <input id="scheduleId" name="scheduleId" type="hidden" />
         <div class="stack">
-          <label for="scheduleParticipantId">Participant ID</label>
-          <input id="scheduleParticipantId" name="participant_id" type="text" required />
+          <label for="scheduleParticipantId">Participant</label>
+          <select id="scheduleParticipantId" name="participant_id" required>
+            <option value="">Select participant</option>
+          </select>
         </div>
         <div class="stack">
           <label for="baptismDate">Date</label>

@@ -14,6 +14,21 @@ export async function fetchAllRequirements() {
 }
 
 /**
+ * Fetch requirements for one participant.
+ * @param {string} participantId
+ */
+export async function fetchRequirementsByParticipant(participantId) {
+  const { data, error } = await supabase
+    .from("requirements")
+    .select("*")
+    .eq("participant_id", participantId)
+    .order("verified_at", { ascending: false, nullsFirst: false });
+
+  if (error) throw error;
+  return data;
+}
+
+/**
  * Insert one requirement record.
  * @param {Object} requirementPayload
  */

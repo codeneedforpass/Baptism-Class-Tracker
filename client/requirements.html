@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reports | Baptism Class Tracker</title>
+    <title>Requirements | Baptism Class Tracker</title>
     <link rel="stylesheet" href="./css/styles.css" />
   </head>
   <body class="app-page">
@@ -25,34 +25,64 @@
       <main class="app-main">
         <section class="container app-container">
           <header class="topbar">
-            <h1>Attendance Report</h1>
+            <h1>Requirements</h1>
             <div class="actions">
               <span id="userEmail" class="muted"></span>
-              <button id="exportCsvBtn" type="button">Export CSV</button>
               <button id="logoutBtn" type="button">Logout</button>
             </div>
           </header>
 
           <p id="status" class="status"></p>
 
+          <form id="requirementForm" class="form-grid">
+            <input id="requirementId" name="requirementId" type="hidden" />
+            <div class="stack">
+              <label for="reqParticipantId">Participant</label>
+              <select id="reqParticipantId" name="participant_id" required>
+                <option value="">Select participant</option>
+              </select>
+            </div>
+            <div class="stack">
+              <label for="requirementName">Requirement</label>
+              <input id="requirementName" name="requirement_name" type="text" required />
+            </div>
+            <div class="stack">
+              <label for="requirementStatus">Status</label>
+              <select id="requirementStatus" name="requirement_status" required>
+                <option value="pending">pending</option>
+                <option value="completed">completed</option>
+                <option value="waived">waived</option>
+              </select>
+            </div>
+            <div class="stack">
+              <label for="requirementNotes">Notes</label>
+              <input id="requirementNotes" name="notes" type="text" />
+            </div>
+            <div class="actions">
+              <button id="saveRequirementBtn" type="submit">Save Requirement</button>
+              <button id="clearRequirementBtn" type="button">Clear</button>
+            </div>
+          </form>
+
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
                   <th>Participant</th>
-                  <th>Class</th>
-                  <th>Class Date</th>
+                  <th>Requirement</th>
                   <th>Status</th>
-                  <th>Marked At</th>
+                  <th>Verified At</th>
+                  <th>Notes</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
-              <tbody id="reportBody"></tbody>
+              <tbody id="requirementsBody"></tbody>
             </table>
           </div>
         </section>
       </main>
     </div>
     <script src="./js/config.js"></script>
-    <script type="module" src="./js/reportsPage.js"></script>
+    <script type="module" src="./js/requirementsPage.js"></script>
   </body>
 </html>
