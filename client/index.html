@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | Baptism Class Tracker</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body class="app-page">
+    <div class="app-shell">
+      <aside class="app-sidebar">
+        <h2 class="sidebar-title">Baptism Tracker</h2>
+        <nav class="sidebar-nav">
+          <a class="nav-link" data-page="dashboard" href="./index.html">Dashboard</a>
+          <a class="nav-link" data-page="participants" href="./participants.html">Participants</a>
+          <a class="nav-link" data-page="classes" href="./classes.html">Classes</a>
+          <a class="nav-link" data-page="attendance" href="./attendance.html">Attendance</a>
+          <a class="nav-link" data-page="baptism" href="./baptism.html">Baptism</a>
+          <a class="nav-link" data-page="reports" href="./reports.html">Reports</a>
+        </nav>
+      </aside>
+
+      <main class="app-main">
+        <section class="container app-container">
+          <header class="topbar">
+            <h1>Baptism Class Tracker</h1>
+            <div class="actions">
+              <span id="userEmail" class="muted"></span>
+              <button id="logoutBtn" type="button">Logout</button>
+            </div>
+          </header>
+
+          <p id="status" class="status">Loading dashboard...</p>
+
+          <section class="row">
+            <article class="card">
+              <p class="muted">Total Participants</p>
+              <p id="totalParticipants">-</p>
+            </article>
+            <article class="card">
+              <p class="muted">Average Age</p>
+              <p id="averageAge">-</p>
+            </article>
+            <article class="card">
+              <p class="muted">Oldest</p>
+              <p id="oldestAge">-</p>
+            </article>
+            <article class="card">
+              <p class="muted">Youngest</p>
+              <p id="youngestAge">-</p>
+            </article>
+            <article class="card">
+              <p class="muted">Completed Participants</p>
+              <p id="completedParticipants">-</p>
+            </article>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script src="./js/config.js"></script>
+    <script type="module" src="./js/dashboardPage.js"></script>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Attendance | Baptism Class Tracker</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body class="app-page">
+    <div class="app-shell">
+      <aside class="app-sidebar">
+        <h2 class="sidebar-title">Baptism Tracker</h2>
+        <nav class="sidebar-nav">
+          <a class="nav-link" data-page="dashboard" href="./index.html">Dashboard</a>
+          <a class="nav-link" data-page="participants" href="./participants.html">Participants</a>
+          <a class="nav-link" data-page="classes" href="./classes.html">Classes</a>
+          <a class="nav-link" data-page="attendance" href="./attendance.html">Attendance</a>
+          <a class="nav-link" data-page="baptism" href="./baptism.html">Baptism</a>
+          <a class="nav-link" data-page="reports" href="./reports.html">Reports</a>
+        </nav>
+      </aside>
+
+      <main class="app-main">
+        <section class="container app-container">
+          <header class="topbar">
+            <h1>Attendance</h1>
+            <div class="actions">
+              <span id="userEmail" class="muted"></span>
+              <button id="logoutBtn" type="button">Logout</button>
+            </div>
+          </header>
+
+          <p id="status" class="status"></p>
+
+      <form id="attendanceForm" class="form-grid">
+        <input id="attendanceId" name="attendanceId" type="hidden" />
+        <div class="stack">
+          <label for="participantId">Participant ID</label>
+          <input id="participantId" name="participant_id" type="text" required />
+        </div>
+        <div class="stack">
+          <label for="classId">Class ID</label>
+          <input id="classId" name="class_id" type="text" required />
+        </div>
+        <div class="stack">
+          <label for="attendanceStatus">Status</label>
+          <select id="attendanceStatus" name="attendance_status" required>
+            <option value="present">present</option>
+            <option value="absent">absent</option>
+            <option value="late">late</option>
+            <option value="excused">excused</option>
+          </select>
+        </div>
+        <div class="actions">
+          <button id="saveAttendanceBtn" type="submit">Save Attendance</button>
+          <button id="clearAttendanceBtn" type="button">Clear</button>
+        </div>
+      </form>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Participant ID</th>
+                  <th>Class ID</th>
+                  <th>Status</th>
+                  <th>Marked At</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="attendanceBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="./js/config.js"></script>
+    <script type="module" src="./js/attendancePage.js"></script>
+  </body>
+</html>

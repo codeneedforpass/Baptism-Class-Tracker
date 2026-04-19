@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Participants | Baptism Class Tracker</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body class="app-page">
+    <div class="app-shell">
+      <aside class="app-sidebar">
+        <h2 class="sidebar-title">Baptism Tracker</h2>
+        <nav class="sidebar-nav">
+          <a class="nav-link" data-page="dashboard" href="./index.html">Dashboard</a>
+          <a class="nav-link" data-page="participants" href="./participants.html">Participants</a>
+          <a class="nav-link" data-page="classes" href="./classes.html">Classes</a>
+          <a class="nav-link" data-page="attendance" href="./attendance.html">Attendance</a>
+          <a class="nav-link" data-page="baptism" href="./baptism.html">Baptism</a>
+          <a class="nav-link" data-page="reports" href="./reports.html">Reports</a>
+        </nav>
+      </aside>
+
+      <main class="app-main">
+        <section class="container app-container">
+          <header class="topbar">
+            <h1>Participants</h1>
+            <div class="actions">
+              <span id="userEmail" class="muted"></span>
+              <button id="logoutBtn" type="button">Logout</button>
+            </div>
+          </header>
+
+          <p id="status" class="status"></p>
+
+      <form id="participantForm" class="form-grid">
+        <input id="participantId" name="participantId" type="hidden" />
+        <div class="stack">
+          <label for="firstName">First Name</label>
+          <input id="firstName" name="first_name" type="text" required />
+        </div>
+        <div class="stack">
+          <label for="lastName">Last Name</label>
+          <input id="lastName" name="last_name" type="text" required />
+        </div>
+        <div class="stack">
+          <label for="participantPhone">Phone</label>
+          <input id="participantPhone" name="phone" type="text" />
+        </div>
+        <div class="stack">
+          <label for="participantEmail">Email</label>
+          <input id="participantEmail" name="email" type="email" />
+        </div>
+        <div class="stack">
+          <label for="dob">Date of Birth</label>
+          <input id="dob" name="date_of_birth" type="date" />
+        </div>
+        <div class="actions">
+          <button id="saveParticipantBtn" type="submit">Save Participant</button>
+          <button id="clearParticipantBtn" type="button">Clear</button>
+        </div>
+      </form>
+
+      <form id="participantsFilterForm" class="form-grid">
+        <div class="stack">
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" placeholder="Search name" />
+        </div>
+        <div class="stack">
+          <label for="statusFilter">Status</label>
+          <select id="statusFilter" name="status">
+            <option value="">All</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="completed">Completed</option>
+            <option value="postponed">Postponed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div class="stack">
+          <label for="fromDate">Baptism Date From</label>
+          <input id="fromDate" name="baptismDateFrom" type="date" />
+        </div>
+        <div class="stack">
+          <label for="toDate">Baptism Date To</label>
+          <input id="toDate" name="baptismDateTo" type="date" />
+        </div>
+        <div class="actions">
+          <button type="submit">Apply</button>
+          <button id="resetFiltersBtn" type="button">Reset</button>
+        </div>
+      </form>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Status</th>
+                  <th>Baptism Date</th>
+                  <th>Phone</th>
+                  <th>Email</th>
+                  <th>Enrolled At</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="participantsBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="./js/config.js"></script>
+    <script type="module" src="./js/participantsPage.js"></script>
+  </body>
+</html>

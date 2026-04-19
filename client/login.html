@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | Baptism Class Tracker</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body class="login-page">
+    <main class="login-wrapper">
+      <section class="login-brand">
+        <h1>Baptism Class Tracker</h1>
+      </section>
+
+      <section class="login-card">
+        <h2>Welcome Back</h2>
+
+        <form id="loginForm" class="stack login-form">
+          <label for="email">Email Address</label>
+          <div class="input-with-icon">
+            <span aria-hidden="true">✉</span>
+            <input id="email" name="email" type="email" placeholder="Enter your email" required />
+          </div>
+
+          <label for="password">Password</label>
+          <div class="input-with-icon">
+            <span aria-hidden="true">⌂</span>
+            <input id="password" name="password" type="password" placeholder="Enter your password" required />
+          </div>
+
+          <button type="submit" class="login-btn">Sign In</button>
+        </form>
+
+        <p id="loginStatus" class="login-status" aria-live="polite"></p>
+      </section>
+
+      <p class="login-footer">Baptism Class Tracker © 2026</p>
+    </main>
+
+    <script src="./js/config.js"></script>
+    <script type="module" src="./js/login.js"></script>
+  </body>
+</html>

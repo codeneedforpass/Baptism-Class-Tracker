@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Classes | Baptism Class Tracker</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body class="app-page">
+    <div class="app-shell">
+      <aside class="app-sidebar">
+        <h2 class="sidebar-title">Baptism Tracker</h2>
+        <nav class="sidebar-nav">
+          <a class="nav-link" data-page="dashboard" href="./index.html">Dashboard</a>
+          <a class="nav-link" data-page="participants" href="./participants.html">Participants</a>
+          <a class="nav-link" data-page="classes" href="./classes.html">Classes</a>
+          <a class="nav-link" data-page="attendance" href="./attendance.html">Attendance</a>
+          <a class="nav-link" data-page="baptism" href="./baptism.html">Baptism</a>
+          <a class="nav-link" data-page="reports" href="./reports.html">Reports</a>
+        </nav>
+      </aside>
+
+      <main class="app-main">
+        <section class="container app-container">
+          <header class="topbar">
+            <h1>Classes</h1>
+            <div class="actions">
+              <span id="userEmail" class="muted"></span>
+              <button id="logoutBtn" type="button">Logout</button>
+            </div>
+          </header>
+
+          <p id="status" class="status"></p>
+
+      <form id="classForm" class="form-grid">
+        <input id="classId" name="classId" type="hidden" />
+        <div class="stack">
+          <label for="className">Class Name</label>
+          <input id="className" name="class_name" type="text" required />
+        </div>
+        <div class="stack">
+          <label for="classDate">Date</label>
+          <input id="classDate" name="class_date" type="date" required />
+        </div>
+        <div class="stack">
+          <label for="startTime">Start</label>
+          <input id="startTime" name="start_time" type="time" required />
+        </div>
+        <div class="stack">
+          <label for="endTime">End</label>
+          <input id="endTime" name="end_time" type="time" required />
+        </div>
+        <div class="stack">
+          <label for="location">Location</label>
+          <input id="location" name="location" type="text" required />
+        </div>
+        <div class="actions">
+          <button id="saveClassBtn" type="submit">Save Class</button>
+          <button id="clearClassBtn" type="button">Clear</button>
+        </div>
+      </form>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Class Name</th>
+                  <th>Date</th>
+                  <th>Start</th>
+                  <th>End</th>
+                  <th>Location</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="classesBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="./js/config.js"></script>
+    <script type="module" src="./js/classesPage.js"></script>
+  </body>
+</html>
