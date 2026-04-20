@@ -1,7 +1,3 @@
--- RLS hardening with role-aware policies.
--- Assumes users.auth_user_id is mapped to auth.users.id.
--- Includes bootstrap fallback: if no mappings exist, authenticated users keep access.
-
 begin;
 
 create or replace function public.has_user_mappings()
@@ -25,7 +21,6 @@ as $$
   );
 $$;
 
--- remove overly broad policies
 drop policy if exists "users_auth_all" on public.users;
 drop policy if exists "participants_auth_all" on public.participants;
 drop policy if exists "classes_auth_all" on public.classes;
@@ -33,7 +28,6 @@ drop policy if exists "attendance_auth_all" on public.attendance;
 drop policy if exists "baptismschedule_auth_all" on public.baptism_schedule;
 drop policy if exists "requirements_auth_all" on public.requirements;
 
--- users
 create policy users_select_policy on public.users
 for select to authenticated
 using (
@@ -55,7 +49,6 @@ with check (
   public.current_app_role() = 'admin'
 );
 
--- participants
 create policy participants_select_policy on public.participants
 for select to authenticated
 using (
@@ -74,7 +67,6 @@ with check (
   public.current_app_role() in ('admin', 'teacher')
 );
 
--- classes
 create policy classes_select_policy on public.classes
 for select to authenticated
 using (
@@ -93,7 +85,6 @@ with check (
   public.current_app_role() in ('admin', 'teacher')
 );
 
--- attendance
 create policy attendance_select_policy on public.attendance
 for select to authenticated
 using (
@@ -112,7 +103,6 @@ with check (
   public.current_app_role() in ('admin', 'teacher', 'assistant')
 );
 
--- baptism_schedule
 create policy baptism_schedule_select_policy on public.baptism_schedule
 for select to authenticated
 using (
@@ -131,7 +121,6 @@ with check (
   public.current_app_role() in ('admin', 'teacher')
 );
 
--- requirements
 create policy requirements_select_policy on public.requirements
 for select to authenticated
 using (

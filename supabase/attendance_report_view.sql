@@ -1,6 +1,3 @@
--- Run this in Supabase SQL editor
--- SQL VIEW joining participants + attendance + classes
-
 create or replace view public.attendance_report as
 select
   a.attendance_id,

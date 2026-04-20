@@ -1,8 +1,3 @@
--- PostgreSQL subqueries for Baptism Class Tracker
--- Run in Supabase SQL editor
-
--- 1) Participants with baptism schedule
--- Uses an IN() subquery against baptism_schedule
 select
   p.participant_id,
   p.first_name,
@@ -14,8 +9,6 @@ where p.participant_id in (
   from public.baptism_schedule bs
 );
 
--- 2) Participants older than average age
--- Uses a scalar subquery with AVG age
 select
   p.participant_id,
   p.first_name,
@@ -30,8 +23,6 @@ where p.date_of_birth is not null
   )
 order by age_years desc;
 
--- 3) Classes with no attendance
--- Uses NOT EXISTS correlated subquery
 select
   c.class_id,
   c.class_name,

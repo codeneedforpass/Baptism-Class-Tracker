@@ -1,8 +1,5 @@
 import { supabase } from "./supabaseClient.js";
 
-/**
- * Fetch all attendance rows ordered by marked timestamp.
- */
 export async function fetchAllAttendance() {
   const { data, error } = await supabase
     .from("attendance")
@@ -13,12 +10,6 @@ export async function fetchAllAttendance() {
   return data;
 }
 
-/**
- * Paged attendance list (newest first).
- * @param {Object} opts
- * @param {number} [opts.limit]
- * @param {number} [opts.offset]
- */
 export async function fetchAttendancePaged(opts = {}) {
   const { limit, offset } = opts;
 
@@ -34,10 +25,6 @@ export async function fetchAttendancePaged(opts = {}) {
   return { rows: data, count };
 }
 
-/**
- * Fetch attendance rows for one participant.
- * @param {string} participantId
- */
 export async function fetchAttendanceByParticipant(participantId) {
   const { data, error } = await supabase
     .from("attendance")
@@ -49,10 +36,6 @@ export async function fetchAttendanceByParticipant(participantId) {
   return data;
 }
 
-/**
- * Fetch attendance rows for one class.
- * @param {string} classId
- */
 export async function fetchAttendanceByClass(classId) {
   const { data, error } = await supabase
     .from("attendance")
@@ -64,10 +47,6 @@ export async function fetchAttendanceByClass(classId) {
   return data;
 }
 
-/**
- * Insert one attendance record.
- * @param {Object} attendancePayload
- */
 export async function insertAttendance(attendancePayload) {
   const { data, error } = await supabase
     .from("attendance")
@@ -79,11 +58,6 @@ export async function insertAttendance(attendancePayload) {
   return data;
 }
 
-/**
- * Update attendance by id.
- * @param {string} attendanceId
- * @param {Object} updates
- */
 export async function updateAttendance(attendanceId, updates) {
   const { data, error } = await supabase
     .from("attendance")
@@ -96,10 +70,6 @@ export async function updateAttendance(attendanceId, updates) {
   return data;
 }
 
-/**
- * Delete attendance by id.
- * @param {string} attendanceId
- */
 export async function deleteAttendance(attendanceId) {
   const { error } = await supabase
     .from("attendance")
@@ -110,13 +80,6 @@ export async function deleteAttendance(attendanceId) {
   return { success: true };
 }
 
-/**
- * Upsert attendance for many participants in one class.
- * Uses unique(participant_id, class_id). Empty string values are treated as "clear row".
- *
- * @param {string} classId
- * @param {Record<string, string | null | undefined>} statusesByParticipantId
- */
 export async function syncAttendanceForClass(classId, statusesByParticipantId) {
   const markedAt = new Date().toISOString();
   const participantIds = Object.keys(statusesByParticipantId || {});

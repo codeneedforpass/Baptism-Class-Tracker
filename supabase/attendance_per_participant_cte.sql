@@ -1,6 +1,3 @@
--- PostgreSQL CTE: total attendance per participant
--- Run in Supabase SQL editor
-
 create or replace view public.attendance_per_participant as
 with attendance_totals as (
   select

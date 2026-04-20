@@ -1,8 +1,5 @@
 import { supabase } from "./supabaseClient.js";
 
-/**
- * Fetch all participants ordered by newest enrollment first.
- */
 export async function fetchAllParticipants() {
   const { data, error } = await supabase
     .from("participants")
@@ -13,10 +10,6 @@ export async function fetchAllParticipants() {
   return data;
 }
 
-/**
- * Fetch one participant by id.
- * @param {string} participantId
- */
 export async function fetchParticipantById(participantId) {
   const { data, error } = await supabase
     .from("participants")
@@ -28,21 +21,6 @@ export async function fetchParticipantById(participantId) {
   return data;
 }
 
-/**
- * Search and filter participants.
- * Uses:
- * - .ilike() for name search
- * - .eq() for exact status
- * - .gte()/.lte() for baptism_date range
- *
- * @param {Object} filters
- * @param {string} [filters.name] - Search text for first/last name
- * @param {string} [filters.status] - Participant status filter
- * @param {string} [filters.baptismDateFrom] - YYYY-MM-DD
- * @param {string} [filters.baptismDateTo] - YYYY-MM-DD
- * @param {number} [filters.limit] - page size
- * @param {number} [filters.offset] - row offset
- */
 export async function fetchParticipantsByFilters(filters = {}) {
   const { name, status, baptismDateFrom, baptismDateTo, limit, offset } = filters;
 
@@ -79,10 +57,6 @@ export async function fetchParticipantsByFilters(filters = {}) {
   return { rows: data, count };
 }
 
-/**
- * Insert one participant record.
- * @param {Object} participant - Participant payload
- */
 export async function insertParticipant(participant) {
   const { data, error } = await supabase
     .from("participants")
@@ -94,11 +68,6 @@ export async function insertParticipant(participant) {
   return data;
 }
 
-/**
- * Update a participant by id.
- * @param {string} participantId
- * @param {Object} updates - Partial participant fields to update
- */
 export async function updateParticipant(participantId, updates) {
   const { data, error } = await supabase
     .from("participants")
@@ -111,10 +80,6 @@ export async function updateParticipant(participantId, updates) {
   return data;
 }
 
-/**
- * Delete a participant by id.
- * @param {string} participantId
- */
 export async function deleteParticipant(participantId) {
   const { error } = await supabase
     .from("participants")

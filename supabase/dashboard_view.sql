@@ -1,6 +1,3 @@
--- Run this in Supabase SQL editor
--- Provides dashboard aggregates in one row.
-
 create or replace view public.dashboard_stats as
 with participant_ages as (
   select

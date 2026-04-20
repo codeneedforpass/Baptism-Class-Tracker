@@ -1,7 +1,3 @@
--- Baptism Class Tracker
--- Core schema + sample data (5+ rows each table)
--- Run this first in Supabase SQL editor.
-
 create extension if not exists pgcrypto;
 
 drop table if exists public.requirements cascade;

@@ -1,8 +1,5 @@
 import { supabase } from "./supabaseClient.js";
 
-/**
- * Fetch all baptism schedule rows ordered by baptism date.
- */
 export async function fetchAllBaptismSchedules() {
   const { data, error } = await supabase
     .from("baptism_schedule")
@@ -13,10 +10,6 @@ export async function fetchAllBaptismSchedules() {
   return data;
 }
 
-/**
- * Fetch baptism schedules for one participant.
- * @param {string} participantId
- */
 export async function fetchBaptismSchedulesByParticipant(participantId) {
   const { data, error } = await supabase
     .from("baptism_schedule")
@@ -28,10 +21,6 @@ export async function fetchBaptismSchedulesByParticipant(participantId) {
   return data;
 }
 
-/**
- * Insert one baptism schedule record.
- * @param {Object} schedulePayload
- */
 export async function insertBaptismSchedule(schedulePayload) {
   const { data, error } = await supabase
     .from("baptism_schedule")
@@ -43,11 +32,6 @@ export async function insertBaptismSchedule(schedulePayload) {
   return data;
 }
 
-/**
- * Update a baptism schedule by id.
- * @param {string} scheduleId
- * @param {Object} updates
- */
 export async function updateBaptismSchedule(scheduleId, updates) {
   const { data, error } = await supabase
     .from("baptism_schedule")
@@ -60,10 +44,6 @@ export async function updateBaptismSchedule(scheduleId, updates) {
   return data;
 }
 
-/**
- * Delete a baptism schedule by id.
- * @param {string} scheduleId
- */
 export async function deleteBaptismSchedule(scheduleId) {
   const { error } = await supabase
     .from("baptism_schedule")

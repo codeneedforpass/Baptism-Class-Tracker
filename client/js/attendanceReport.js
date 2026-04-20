@@ -1,9 +1,5 @@
 import { supabase } from "./supabaseClient.js";
 
-/**
- * Fetch attendance report with participant + class details
- * using Supabase relational select.
- */
 export async function fetchAttendanceReport() {
   const { data, error } = await supabase
     .from("attendance")
@@ -30,10 +26,6 @@ export async function fetchAttendanceReportFromView() {
   return data;
 }
 
-/**
- * Render attendance report rows into a target element.
- * Expects an element id like: <tbody id="attendanceReportBody"></tbody>
- */
 export async function displayAttendanceReport(targetElementId) {
   const target = document.getElementById(targetElementId);
   if (!target) {

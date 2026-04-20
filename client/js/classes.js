@@ -1,8 +1,5 @@
 import { supabase } from "./supabaseClient.js";
 
-/**
- * Fetch all classes ordered by class date.
- */
 export async function fetchAllClasses() {
   const { data, error } = await supabase
     .from("classes")
@@ -13,12 +10,6 @@ export async function fetchAllClasses() {
   return data;
 }
 
-/**
- * Paged class list (same sort as fetchAllClasses).
- * @param {Object} opts
- * @param {number} [opts.limit]
- * @param {number} [opts.offset]
- */
 export async function fetchClassesPaged(opts = {}) {
   const { limit, offset } = opts;
 
@@ -34,10 +25,6 @@ export async function fetchClassesPaged(opts = {}) {
   return { rows: data, count };
 }
 
-/**
- * Insert one class record.
- * @param {Object} classPayload
- */
 export async function insertClass(classPayload) {
   const { data, error } = await supabase
     .from("classes")
@@ -49,11 +36,6 @@ export async function insertClass(classPayload) {
   return data;
 }
 
-/**
- * Update a class by id.
- * @param {string} classId
- * @param {Object} updates
- */
 export async function updateClass(classId, updates) {
   const { data, error } = await supabase
     .from("classes")
@@ -66,10 +48,6 @@ export async function updateClass(classId, updates) {
   return data;
 }
 
-/**
- * Delete a class by id.
- * @param {string} classId
- */
 export async function deleteClass(classId) {
   const { error } = await supabase.from("classes").delete().eq("class_id", classId);
 
