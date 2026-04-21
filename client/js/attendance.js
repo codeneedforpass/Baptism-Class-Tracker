@@ -25,6 +25,41 @@ export async function fetchAttendancePaged(opts = {}) {
   return { rows: data, count };
 }
 
+export async function fetchAttendanceByFilters(opts = {}) {
+  const { participantId, classId, status, markedFrom, markedTo, limit, offset } = opts;
+
+  let query = supabase.from("attendance").select("*", { count: "exact" }).order("marked_at", { ascending: false });
+
+  if (participantId && String(participantId).trim()) {
+    query = query.eq("participant_id", String(participantId).trim());
+  }
+
+  if (classId && String(classId).trim()) {
+    query = query.eq("class_id", String(classId).trim());
+  }
+
+  if (status && String(status).trim()) {
+    query = query.eq("attendance_status", String(status).trim());
+  }
+
+  if (markedFrom && String(markedFrom).trim()) {
+    query = query.gte("marked_at", `${String(markedFrom).trim()}T00:00:00`);
+  }
+
+  if (markedTo && String(markedTo).trim()) {
+    query = query.lte("marked_at", `${String(markedTo).trim()}T23:59:59.999`);
+  }
+
+  if (typeof limit === "number" && limit > 0) {
+    const safeOffset = typeof offset === "number" && offset >= 0 ? offset : 0;
+    query = query.range(safeOffset, safeOffset + limit - 1);
+  }
+
+  const { data, error, count } = await query;
+  if (error) throw error;
+  return { rows: data, count };
+}
+
 export async function fetchAttendanceByParticipant(participantId) {
   const { data, error } = await supabase
     .from("attendance")

@@ -1,6 +1,6 @@
 import {
   deleteAttendance,
-  fetchAttendancePaged,
+  fetchAttendanceByFilters,
   insertAttendance,
   updateAttendance
 } from "./attendance.js";
@@ -14,6 +14,9 @@ const attendanceForm = document.getElementById("attendanceForm");
 const saveAttendanceBtn = document.getElementById("saveAttendanceBtn");
 const participantSelect = document.getElementById("participantId");
 const classSelect = document.getElementById("classId");
+const attendanceFilterForm = document.getElementById("attendanceFilterForm");
+const filterParticipantSelect = document.getElementById("filterParticipantId");
+const filterClassSelect = document.getElementById("filterClassId");
 const pageInfoEl = document.getElementById("pageInfo");
 const pageSizeEl = document.getElementById("pageSize");
 const prevPageBtn = document.getElementById("prevPageBtn");
@@ -25,6 +28,7 @@ let classesMap = new Map();
 let currentPage = 0;
 let pageSize = Number(pageSizeEl?.value || 25) || 25;
 let totalCount = 0;
+let listFilters = {};
 
 function formatParticipantLabel(row) {
   const fullName = `${row.first_name || ""} ${row.last_name || ""}`.trim();
@@ -47,10 +51,23 @@ async function loadFormOptions() {
     ...participants.map((row) => `<option value="${row.participant_id}">${formatParticipantLabel(row)}</option>`)
   ].join("");
 
+  filterParticipantSelect.innerHTML = [
+    "<option value=''>All participants</option>",
+    ...participants.map((row) => `<option value="${row.participant_id}">${formatParticipantLabel(row)}</option>`)
+  ].join("");
+
   classSelect.innerHTML = [
     "<option value=''>Select class</option>",
     ...classes.map((row) => `<option value="${row.class_id}">${formatClassLabel(row)}</option>`)
   ].join("");
+
+  filterClassSelect.innerHTML = [
+    "<option value=''>All classes</option>",
+    ...classes.map((row) => `<option value="${row.class_id}">${formatClassLabel(row)}</option>`)
+  ].join("");
+
+  if (listFilters.participantId) filterParticipantSelect.value = listFilters.participantId;
+  if (listFilters.classId) filterClassSelect.value = listFilters.classId;
 }
 
 function renderRows(rows) {
@@ -93,16 +110,25 @@ function updatePaginationUi() {
 }
 
 async function loadAttendanceTable(options = {}) {
-  const { resetPage } = options;
+  const { resetPage, filtersOverride } = options;
   if (resetPage) currentPage = 0;
 
+  const filters = filtersOverride || listFilters;
   const offset = currentPage * pageSize;
   statusEl.textContent = "Loading attendance...";
   prevPageBtn && (prevPageBtn.disabled = true);
   nextPageBtn && (nextPageBtn.disabled = true);
 
   try {
-    const { rows, count } = await fetchAttendancePaged({ limit: pageSize, offset });
+    const { rows, count } = await fetchAttendanceByFilters({
+      participantId: filters.participantId,
+      classId: filters.classId,
+      status: filters.status,
+      markedFrom: filters.markedFrom,
+      markedTo: filters.markedTo,
+      limit: pageSize,
+      offset
+    });
     totalCount = typeof count === "number" ? count : rows.length;
     currentRows = rows;
     renderRows(rows);
@@ -114,6 +140,17 @@ async function loadAttendanceTable(options = {}) {
   } catch (error) {
     statusEl.textContent = `Failed to load attendance: ${error.message}`;
   }
+}
+
+function readFiltersFromForm() {
+  const formData = new FormData(attendanceFilterForm);
+  return {
+    participantId: String(formData.get("participant_id") || "").trim(),
+    classId: String(formData.get("class_id") || "").trim(),
+    status: String(formData.get("attendance_status") || "").trim(),
+    markedFrom: String(formData.get("marked_from") || "").trim(),
+    markedTo: String(formData.get("marked_to") || "").trim()
+  };
 }
 
 async function loadAttendance(options = {}) {
@@ -140,6 +177,7 @@ async function init() {
   try {
     await initProtectedPage("attendance");
     await loadAttendance({ resetPage: true });
+    listFilters = readFiltersFromForm();
 
     attendanceForm.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -173,6 +211,18 @@ async function init() {
       statusEl.textContent = "Form cleared.";
     });
 
+    attendanceFilterForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      listFilters = readFiltersFromForm();
+      await loadAttendanceTable({ resetPage: true });
+    });
+
+    document.getElementById("resetAttendanceFiltersBtn").addEventListener("click", async () => {
+      attendanceFilterForm.reset();
+      listFilters = readFiltersFromForm();
+      await loadAttendanceTable({ resetPage: true });
+    });
+
     tbody.addEventListener("click", async (event) => {
       const editId = event.target.dataset.editId;
       const deleteId = event.target.dataset.deleteId;
@@ -197,7 +247,6 @@ async function init() {
 
     pageSizeEl?.addEventListener("change", async () => {
       pageSize = Number(pageSizeEl.value || 25) || 25;
-      await loadFormOptions();
       await loadAttendanceTable({ resetPage: true });
     });
 

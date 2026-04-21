@@ -76,6 +76,43 @@
         </div>
       </form>
 
+      <form id="attendanceFilterForm" class="form-grid">
+        <div class="stack">
+          <label for="filterParticipantId">Filter Participant</label>
+          <select id="filterParticipantId" name="participant_id">
+            <option value="">All participants</option>
+          </select>
+        </div>
+        <div class="stack">
+          <label for="filterClassId">Filter Class</label>
+          <select id="filterClassId" name="class_id">
+            <option value="">All classes</option>
+          </select>
+        </div>
+        <div class="stack">
+          <label for="filterAttendanceStatus">Filter Status</label>
+          <select id="filterAttendanceStatus" name="attendance_status">
+            <option value="">All statuses</option>
+            <option value="present">present</option>
+            <option value="absent">absent</option>
+            <option value="late">late</option>
+            <option value="excused">excused</option>
+          </select>
+        </div>
+        <div class="stack">
+          <label for="markedFrom">Marked From</label>
+          <input id="markedFrom" name="marked_from" type="date" />
+        </div>
+        <div class="stack">
+          <label for="markedTo">Marked To</label>
+          <input id="markedTo" name="marked_to" type="date" />
+        </div>
+        <div class="actions">
+          <button type="submit">Apply</button>
+          <button id="resetAttendanceFiltersBtn" type="button">Reset</button>
+        </div>
+      </form>
+
           <div class="table-wrap">
             <table>
               <thead>
